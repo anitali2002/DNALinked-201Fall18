@@ -171,6 +171,9 @@ public class LinkStrand implements IDnaStrand {
 //		Node myCurrent; //current node in the iteration
 		char ch = ' ';
 		
+		if (index >= this.size() || index < 0) {
+			throw new IndexOutOfBoundsException();
+		}
 		
 		if (index < myGlobalIndex) {
 			myCurrent = myFirst;
@@ -178,8 +181,7 @@ public class LinkStrand implements IDnaStrand {
 		}
 		else {
 			myLocalIndex = index - myGlobalIndex + myLocalIndex;
-		}
-		
+		}	
 		
 		while (myCurrent != null) {
 			if (myCurrent.info.length() <= myLocalIndex) {
