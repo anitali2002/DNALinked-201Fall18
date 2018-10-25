@@ -24,8 +24,8 @@ public class LinkStrand implements IDnaStrand {
 	private long mySize;
 	private int myAppends;
 	private Node myCurrent;
-	private int myGlobalIndex = 0; //overall index
-	private int myLocalIndex = 0;
+	private int myGlobalIndex; //overall index
+	private int myLocalIndex;
 
 
 	/**
@@ -73,6 +73,8 @@ public class LinkStrand implements IDnaStrand {
 		myAppends = 0;
 		mySize = myFirst.info.length();
 		myCurrent = myFirst; //current node in the iteration
+		myGlobalIndex = 0; //overall index
+		myLocalIndex = 0;
 	}
 
 	/**
@@ -151,11 +153,13 @@ public class LinkStrand implements IDnaStrand {
 //			reverse.myFirst = new Node(copy.info);
 			reverse.myFirst = new Node(copy.info, reverse.myFirst);
 			StringBuilder forNode = new StringBuilder(copy.next.info);
-			forNode.reverse();
-			reverse.myFirst.info = forNode.toString();
-			reverse.mySize += forNode.toString().length();
+			String reversed = forNode.reverse().toString();
+			reverse.myFirst.info = reversed;
+			reverse.mySize += reversed.length();
 			copy = copy.next;
 		}
+		
+		reverse.mySize = mySize;
 		
 		return reverse;
 	}
