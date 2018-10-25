@@ -17,8 +17,8 @@ public class TestIterator {
 	
 	public IDnaStrand getNewStrand(String s) {
 		//return new StringStrand(s);
-		//return new LinkStrand(s);
-		return new StringBuilderStrand(s);
+		return new LinkStrand(s);
+		//return new StringBuilderStrand(s);
 	}
 
 	
@@ -39,13 +39,14 @@ public class TestIterator {
 
 	@Test
 	public void testRandomIndexes() {
-		Random rand = new Random(12356);
+		Random rand = new Random(12365);
 		char[] arr = {'c','g','a','t'};
 		
 		for(int k=0; k < 30; k++) {
 			int index = rand.nextInt((int)ourStrand.size());
+			//int index = 1;
 			char ch = ourStrand.charAt(index);
-			assertTrue(k+"-th index is "+index,ch == arr[index % 4]);
+			assertTrue(k+"-th index is "+index + " " +ch + " " + arr[index%4],ch == arr[index % 4]);
 		}
 	}
 	

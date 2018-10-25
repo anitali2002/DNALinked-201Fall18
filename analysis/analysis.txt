@@ -16,6 +16,46 @@ Question 1: Are the benchmark timings for StringStrand consistent
 		This means that b2 will be constant in the benchmark, 
 		but S will vary. 
 
+	Benchmark Results:
+		dna length = 4,639,221
+		cutting at enzyme gaattc
+		-----
+		Class	                splicee	      recomb	time	appends
+		-----
+		StringStrand:	            256	      4,800,471	0.852	1290
+		StringStrand:	            512	      4,965,591	0.826	1290
+		StringStrand:	          1,024	      5,295,831	0.933	1290
+		StringStrand:	          2,048	      5,956,311	1.524	1290
+		StringStrand:	          4,096	      7,277,271	1.617	1290
+		StringStrand:	          8,192	      9,919,191	2.117	1290
+		StringStrand:	         16,384	     15,203,031	3.634	1290
+		StringStrand:	         32,768	     25,770,711	6.320	1290
+		StringStrand:	         65,536	     46,906,071	11.305	1290
+		StringStrand:	        131,072	     89,176,791	24.953	1290
+		StringStrand:	        262,144	    173,718,231	41.968	1290
+		StringStrand:	        524,288	    342,801,111	79.016	1290
+		Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+			at StringStrand.append(StringStrand.java:70)
+			at IDnaStrand.cutAndSplice(IDnaStrand.java:37)
+			at DNABenchmark.lambda$0(DNABenchmark.java:76)
+			at DNABenchmark$$Lambda$141/728115831.run(Unknown Source)
+			at java.base/java.lang.Thread.run(Unknown Source)
+			at DNABenchmark.strandSpliceBenchmark(DNABenchmark.java:79)
+			at DNABenchmark.main(DNABenchmark.java:113)
+
+	Yes, the benchmark timings for StringStrand are consistent 
+		with the explanation that the time to execute cutAndSplice
+		is O(b2S). Since the append method for StringStrand objects require
+		the creation of a new strand for each call, it is like having twice 
+		as many breaks total. The runtime depends on how long it takes to 
+		concatenate two character-sequences, and it will take a lot longer
+		if the program has to keep create new String objects (which is what
+		the append method of StringStrand is doing). As the lengths of the
+		strand get bigger and bigger, the benchmark timings get incredibly 
+		slow (twice the size of the strand correlates to about twice the 
+		runtime). 
+
+
 Question 2: Are the benchmark timings for StringBuilderStrand 
 	consistent with the explanation below that the time to 
 	execute cutAndSplice is O(bS)? 
@@ -25,9 +65,100 @@ Question 2: Are the benchmark timings for StringBuilderStrand
 		of append in the method cutAndSplice -- see the code. 
 		This means that b will be constant in the benchmark, 
 		but S will vary. 
+		
+	Benchmark Results:
+		dna length = 4,639,221
+		cutting at enzyme gaattc
+		-----
+		Class	                splicee	      recomb	time	appends
+		-----
+		StringBuilderStrand:	            256	      4,800,471	0.034	1290
+		StringBuilderStrand:	            512	      4,965,591	0.025	1290
+		StringBuilderStrand:	          1,024	      5,295,831	0.016	1290
+		StringBuilderStrand:	          2,048	      5,956,311	0.008	1290
+		StringBuilderStrand:	          4,096	      7,277,271	0.014	1290
+		StringBuilderStrand:	          8,192	      9,919,191	0.014	1290
+		StringBuilderStrand:	         16,384	     15,203,031	0.025	1290
+		StringBuilderStrand:	         32,768	     25,770,711	0.033	1290
+		StringBuilderStrand:	         65,536	     46,906,071	0.057	1290
+		StringBuilderStrand:	        131,072	     89,176,791	0.107	1290
+		StringBuilderStrand:	        262,144	    173,718,231	0.232	1290
+		StringBuilderStrand:	        524,288	    342,801,111	0.421	1290
+		Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+			at java.base/java.util.Arrays.copyOf(Unknown Source)
+			at java.base/java.lang.AbstractStringBuilder.ensureCapacityInternal(Unknown Source)
+			at java.base/java.lang.AbstractStringBuilder.append(Unknown Source)
+			at java.base/java.lang.StringBuilder.append(Unknown Source)
+			at StringBuilderStrand.append(StringBuilderStrand.java:70)
+			at IDnaStrand.cutAndSplice(IDnaStrand.java:41)
+			at DNABenchmark.strandSpliceBenchmark(DNABenchmark.java:67)
+			at DNABenchmark.main(DNABenchmark.java:113) 
+	
+	Yes, the benchmark timings for StringBuilderStrand are consistent 
+		with the explanation that the time to execute cutAndSplice
+		is O(bS). Since the append method for StringStrand objects only adds
+		the new String to the end of the original String object, a lot more 
+		time is saved, compared to the StringStrand runtime. The runtime 
+		depends on how long it takes to concatenate two character-sequences, 
+		and the append method for StringBuilderStrand objects have better (faster)
+		runtimes than StringStrand objects since they don't have to create new
+		String objects with each call.  As the lengths of the strand get 
+		bigger and bigger, the benchmark timings still increase but at a smaller, 
+		more linear rate.  
+	
 
 Question 3: Explain why the time for LinkStrand does not change 
 	much at all over all the runs in the benchmark program. 
 	Explain why you think memory is exhausted at the specific 
 	strand size you see in your timings -- as compared to 
 	exhaustion for String and StringBuilder.
+
+	
+	Benchmark Results:
+		dna length = 4,639,221
+		cutting at enzyme gaattc
+		-----
+		Class	                splicee	      recomb	time	appends
+		-----
+		LinkStrand:	            256	      4,800,471	0.032	1290
+		LinkStrand:	            512	      4,965,591	0.043	1290
+		LinkStrand:	          1,024	      5,295,831	0.009	1290
+		LinkStrand:	          2,048	      5,956,311	0.013	1290
+		LinkStrand:	          4,096	      7,277,271	0.010	1290
+		LinkStrand:	          8,192	      9,919,191	0.009	1290
+		LinkStrand:	         16,384	     15,203,031	0.013	1290
+		LinkStrand:	         32,768	     25,770,711	0.010	1290
+		LinkStrand:	         65,536	     46,906,071	0.013	1290
+		LinkStrand:	        131,072	     89,176,791	0.009	1290
+		LinkStrand:	        262,144	    173,718,231	0.009	1290
+		LinkStrand:	        524,288	    342,801,111	0.014	1290
+		LinkStrand:	      1,048,576	    680,966,871	0.013	1290
+		LinkStrand:	      2,097,152	  1,357,298,391	0.013	1290
+		LinkStrand:	      4,194,304	  2,709,961,431	0.016	1290
+		LinkStrand:	      8,388,608	  5,415,287,511	0.013	1290
+		LinkStrand:	     16,777,216	 10,825,939,671	0.011	1290
+		LinkStrand:	     33,554,432	 21,647,243,991	0.011	1290
+		LinkStrand:	     67,108,864	 43,289,852,631	0.010	1290
+		LinkStrand:	    134,217,728	 86,575,069,911	0.009	1290
+		LinkStrand:	    268,435,456	173,145,504,471	0.009	1290
+		LinkStrand:	    536,870,912	346,286,373,591	0.013	1290
+		Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+			at java.base/java.util.Arrays.copyOf(Unknown Source)
+			at java.base/java.lang.AbstractStringBuilder.ensureCapacityInternal(Unknown Source)
+			at java.base/java.lang.AbstractStringBuilder.append(Unknown Source)
+			at java.base/java.lang.StringBuilder.append(Unknown Source)
+			at DNABenchmark.main(DNABenchmark.java:110)
+		
+	The time for LinkStrand does not change much at all over all the
+		runs in the benchmark program because runtime does not depend
+		on how long it takes to concatenate two character-sequences as 
+		it does with StringStrands and StringBuilderStrands. Since 
+		LinkStrands deal with Nodes instead of working with just String
+		objects, it is is definitely faster to swap out a Node/section 
+		for another. The memory exhausted at the specific strand size 
+		because the append method for LinkStrand objects took a lot less
+		memory. Instead of having to hold many String objects or very long
+		String objects, the LinkStrand objects dealt with Nodes (and many 
+		other Nodes could point back to the same Node) so it took a lot less
+		memory and so many more Nodes could be created- allowing more 
+		cutAndSplices to occur and thus longer recombs to be created. 

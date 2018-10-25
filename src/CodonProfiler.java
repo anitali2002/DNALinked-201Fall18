@@ -16,24 +16,62 @@ public class CodonProfiler {
 		HashMap<String,Integer> map = new HashMap<>();
 		int[] ret = new int[codons.length];
 				
-		for(int k=0; k < codons.length; k++) {
-			Iterator<Character> iter = strand.iterator();
-			while (iter.hasNext()) {
-				char a = iter.next();
-				char b = 'z';           // not part of any real codon
-				char c = 'z';
+//		for(int k=0; k < codons.length; k++) {
+//			Iterator<Character> iter = strand.iterator();
+//			while (iter.hasNext()) {
+//				char a = iter.next();
+//				char b = 'z';           // not part of any real codon
+//				char c = 'z';
+//				if (iter.hasNext()) {
+//					b = iter.next();
+//				}
+//				if (iter.hasNext()) {
+//					c = iter.next();
+//				}
+//				String cod = ""+a+b+c;
+//				if (cod.equals(codons[k])) {
+//					ret[k] += 1;
+//				}
+//			}
+//		}
+		
+		/**
+		 * @author al367
+		 * 
+		 * count hot many times every possible codon in the strand occurs
+		 * 
+		 * return count of codons in given parameters
+		 * 
+		 */
+		
+		Iterator<Character> iter = strand.iterator();
+		
+		while (iter.hasNext()) {
+			String possCodon = "";
+			
+			for (int i = 0; i < 3; i++) {
 				if (iter.hasNext()) {
-					b = iter.next();
-				}
-				if (iter.hasNext()) {
-					c = iter.next();
-				}
-				String cod = ""+a+b+c;
-				if (cod.equals(codons[k])) {
-					ret[k] += 1;
+					possCodon += iter.next();
 				}
 			}
+			
+			if (map.get(possCodon) != null) {
+				map.put(possCodon, map.get(possCodon) + 1);
+			}
+			else {
+				map.put(possCodon, 1);
+			}
 		}
+		
+		for (int i = 0; i < codons.length; i++) {
+			if (map.containsKey(codons[i])) {
+				ret[i] = map.get(codons[i]);
+			}
+			else {
+				ret[i] = 0;
+			}
+		}
+		
 		return ret;
 	}
 }

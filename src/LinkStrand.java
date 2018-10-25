@@ -23,8 +23,10 @@ public class LinkStrand implements IDnaStrand {
 	private Node myFirst, myLast;
 	private long mySize;
 	private int myAppends;
-	//private LinkedList myInfo;
-	//private int myAppends;
+	private Node myCurrent;
+	private int myGlobalIndex = 0; //overall index
+	private int myLocalIndex = 0;
+
 
 	/**
 	 * default constructor
@@ -50,11 +52,11 @@ public class LinkStrand implements IDnaStrand {
 	 */
 	@Override
 	public long size() {
-		Node copy = myFirst;
-		while(copy != null) {
-			mySize += copy.info.length();
-			copy = copy.next;
-		}
+//		Node copy = myFirst;
+//		while(copy != null) {
+//			mySize += copy.info.length();
+//			copy = copy.next;
+//		}
 		
 		return mySize;
 	}
@@ -69,7 +71,8 @@ public class LinkStrand implements IDnaStrand {
 		myFirst = new Node(source);
 		myLast = myFirst;
 		myAppends = 0;
-		mySize = 0;
+		mySize = myFirst.info.length();
+		myCurrent = myFirst; //current node in the iteration
 	}
 
 	/**
@@ -93,9 +96,23 @@ public class LinkStrand implements IDnaStrand {
 	 */
 	@Override
 	public IDnaStrand append(String dna) {
-		//Node newNode = new Node(dna);
+//		Node newNode = new Node(dna);
 		//myFirst.next = newNode;
-		myLast.next = new Node(dna);
+		//myLast = new Node(myLast.info, new Node(dna));
+//		myLast.next = new Node(dna);
+//		myLast = myLast.next;
+		
+		Node copy = myFirst;
+		
+		while (copy != null) {
+			copy = copy.next;
+		}
+		
+		copy = new Node(dna);
+		
+		myLast.next = copy;
+		myLast = myLast.next;
+
 		mySize += dna.length();
 		myAppends += 1;
 		
@@ -134,11 +151,50 @@ public class LinkStrand implements IDnaStrand {
 	public int getAppendCount() {
 		return myAppends;
 	}
-
+	
+	/**
+	 * myIndex is the value of the parameter in the last call to charAt
+	 * 
+	 * myLocalIndex is the value of the index within the string stored 
+	 * in the node last-referenced by charAt when the method finishes
+	 * 
+	 * myCurrent is the node of the internal list referenced in the last
+	 * call to charAt 
+	 * 
+	 * @param int index
+	 * @return char at the index
+	 */
 	@Override
 	public char charAt(int index) {
-		// TODO Auto-generated method stub
-		return 0;
+		//int totalIndex; //total indicies 
+		//int myLocalIndex; //current index in that node
+//		Node myCurrent; //current node in the iteration
+		char ch = ' ';
+		
+		
+		if (index < myGlobalIndex) {
+			myCurrent = myFirst;
+			myLocalIndex = index;
+		}
+		else {
+			myLocalIndex = index - myGlobalIndex + myLocalIndex;
+		}
+		
+		
+		while (myCurrent != null) {
+			if (myCurrent.info.length() <= myLocalIndex) {
+				myLocalIndex -= myCurrent.info.length();
+				myCurrent = myCurrent.next;
+			}
+			
+			else {
+				ch = myCurrent.info.charAt(myLocalIndex);
+				break;
+			}
+		}
+	
+		myGlobalIndex = index;	
+		return ch;
 	}
 
 	/**
@@ -151,6 +207,7 @@ public class LinkStrand implements IDnaStrand {
 	public String toString() {
 		StringBuilder stringRep = new StringBuilder();
 		Node copy = myFirst;
+		
 		while (copy != null) {
 			stringRep.append(copy.info);
 			copy = copy.next;
