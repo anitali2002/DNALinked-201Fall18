@@ -1,5 +1,9 @@
 /**
  * 
+ * Name: Anita Li 
+ * DNA Linked Project 2018 
+ * LinkStrand.java 
+ * 
  * @author al367
  *
  */
